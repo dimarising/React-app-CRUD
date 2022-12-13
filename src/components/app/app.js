@@ -19,7 +19,8 @@ class App extends Component {
           {name: "Robert Polson", salary: 2200, increase: false, like: false, id: 3},
           {name: "Tomas Anderson", salary: 5300, increase: false, like: false, id: 4}
        ],
-       term: []
+       term: '',
+       filter: 'all'
     }
     this.maxId = 4;
   }
@@ -81,18 +82,35 @@ class App extends Component {
     this.setState({term});
   }
 
+  filterPost = (items, filter) =>{
+    switch(filter){
+      case 'like':
+        return items.filter(item => item.like );
+      case 'moreThen1000':
+        return items.filter(item => item.salary > 1000);
+      default:
+        return items;
+
+    }
+
+  }
+
+  onfilterSelect = (filter) => {
+    this.setState({filter});
+  }
+
   render() {
-    const {data, term} = this.state;
+    const {data, term, filter} = this.state;
     const employees = this.state.data.length;
     const increased = this.state.data.filter(item => item.increase).length;
-    const visibleData = this.searchEmp(data, term);
+    const visibleData = this.filterPost(this.searchEmp(data, term), filter);
     return (
       <div className="app">
            <AppInfo employees={employees} increased={increased}/>
   
           <div className="search-panel">
               <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
-              <AppFilter/>
+              <AppFilter filter={filter} onfilterSelect={this.onfilterSelect}/>
           </div>
           
           <EmployeesList 
